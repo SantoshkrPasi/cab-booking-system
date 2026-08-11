@@ -77,6 +77,22 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(TripNotFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleTripNotFound(
+            TripNotFoundException ex) {
+
+        ApiResponse<Void> response = new ApiResponse<>(
+                false,
+                ex.getMessage(),
+                null
+        );
+
+        return new ResponseEntity<>(
+                response,
+                HttpStatus.NOT_FOUND
+        );
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Map<String, String>>> handleValidationException(
             MethodArgumentNotValidException ex) {
