@@ -5,11 +5,14 @@ import com.cabservice.dto.response.TripResponseDTO;
 import com.cabservice.entity.Trip;
 import com.cabservice.entity.TripStatus;
 import com.cabservice.entity.User;
+import com.cabservice.exception.BadRequestException;
 import com.cabservice.exception.TripNotFoundException;
 import com.cabservice.exception.UserNotFoundException;
 import com.cabservice.mapper.TripMapper;
 import com.cabservice.repository.TripRepository;
 import com.cabservice.repository.UserRepository;
+import com.cabservice.service.DistanceService;
+import com.cabservice.service.FareService;
 import com.cabservice.service.TripService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,22 +26,31 @@ public class TripServiceImpl implements TripService {
 
     private final TripRepository tripRepository;
     private final UserRepository userRepository;
+    private final DistanceService distanceService;
+    private final FareService fareService;
 
     @Override
     public TripResponseDTO bookTrip(TripRequestDTO request) {
 
+        // 1. Origin and destination cannot be same
+        if(request.getOrigin().trim().equalsIgnoreCase(request.getDestination().trim())) {
+
+            throw new BadRequestException("Origin and destination cannot be the same");
+        }
+
+        // 2. Return date cannot be before pickup date
+        if(request.getReturnDate() != null && request.getReturnDate().isBefore(request.getPickupDate())) {
+
+            throw new BadRequestException("Return date cannot be before pickup date");
+        }
+
+
         User user = userRepository.findById(request.getUserId())
-                                  .orElseThrow(() ->
-                                          new UserNotFoundException(
-                                                  "User not found with id: " + request.getUserId()
-                                          ));
+                                  .orElseThrow(() -> new UserNotFoundException(
+                                          "User not found with id: " + request.getUserId()));
 
-        Double distance = 10.0;
-
-        Double baseFare = 50.0;
-        Double pricePerKm = 20.0;
-
-        Double fare = baseFare + (distance * pricePerKm);
+        Double distance = distanceService.calculateDistance(request.getOrigin(), request.getDestination());
+        Double fare = fareService.calculateFare(distance);
 
         Trip trip = Trip.builder()
                         .user(user)
@@ -61,10 +73,7 @@ public class TripServiceImpl implements TripService {
     public TripResponseDTO getTripById(Long tripId) {
 
         Trip trip = tripRepository.findById(tripId)
-                                  .orElseThrow(() ->
-                                          new TripNotFoundException(
-                                                  "Trip not found with id: " + tripId
-                                          ));
+                                  .orElseThrow(() -> new TripNotFoundException("Trip not found with id: " + tripId));
 
         return TripMapper.toDTO(trip);
     }
@@ -73,14 +82,9 @@ public class TripServiceImpl implements TripService {
     public List<TripResponseDTO> getTripsByUser(Long userId) {
 
         if(! userRepository.existsById(userId)) {
-            throw new UserNotFoundException(
-                    "User not found with id: " + userId
-            );
+            throw new UserNotFoundException("User not found with id: " + userId);
         }
 
-        return tripRepository.findByUserId(userId)
-                             .stream()
-                             .map(TripMapper :: toDTO)
-                             .toList();
+        return tripRepository.findByUserId(userId).stream().map(TripMapper :: toDTO).toList();
     }
 }
