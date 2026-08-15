@@ -7,6 +7,29 @@ import com.cabservice.dto.response.UserResponseDTO;
 
 public interface AuthService {
 
-    UserResponseDTO registerUser(UserRequestDTO userRequestDTO);
+    void startRegistration(UserRequestDTO userRequestDTO);
+
+    void verifyRegistrationEmail(
+            String email,
+            String otp
+    );
+
+    UserResponseDTO verifyRegistrationMobile(
+            String mobileNo,
+            String otp
+    );
+
     LoginResponseDTO loginUser(LoginRequestDTO request);
+
+    void sendForgotPasswordOtp(String email);
+
+    void verifyForgotPasswordOtp(
+            String email,
+            String otp
+    );
+
+    void resetPassword(
+            String email,
+            String newPassword
+    );
 }

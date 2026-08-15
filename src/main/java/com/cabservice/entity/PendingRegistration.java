@@ -7,23 +7,23 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
-@Table(name = "users")
+@Table(name = "pending_registrations")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User {
+public class PendingRegistration {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String firstName;
 
+    @Column(nullable = false)
     private String lastName;
 
     @Column(nullable = false, unique = true)
@@ -33,20 +33,17 @@ public class User {
     private String mobileNo;
 
     @Column(nullable = false)
-    private String password;
-    
-    @Enumerated(EnumType.STRING)
+    private String encodedPassword;
+
     @Column(nullable = false)
-    private Role role;
+    private Boolean emailVerified;
 
+    @Column(nullable = false)
+    private Boolean mobileVerified;
+
+    @Column(nullable = false)
+    private LocalDateTime expiresAt;
+
+    @Column(nullable = false)
     private LocalDateTime createdAt;
-
-    @OneToMany(
-            mappedBy = "user",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    @Builder.Default
-    private List<Trip> trips = new ArrayList<>();
-
 }
