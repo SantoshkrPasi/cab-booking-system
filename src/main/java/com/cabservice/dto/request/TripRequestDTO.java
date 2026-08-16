@@ -9,10 +9,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class TripRequestDTO {
-
-    @NotNull(message = "User ID is required")
-    private Long userId;
-
+    
     @NotBlank(message = "Origin is required")
     private String origin;
 

@@ -7,9 +7,13 @@ import java.util.List;
 
 public interface TripService {
 
+
     TripResponseDTO bookTrip(TripRequestDTO request);
 
-    TripResponseDTO getTripById(Long tripId);
+    TripResponseDTO getMyTripById(Long tripId);
 
-    List<TripResponseDTO> getTripsByUser(Long userId);
+    List<TripResponseDTO> getMyTrips();
+
+    TripResponseDTO cancelMyTrip(Long tripId);
+
 }

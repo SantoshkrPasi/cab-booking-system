@@ -7,10 +7,10 @@ import com.cabservice.entity.TripStatus;
 import com.cabservice.entity.User;
 import com.cabservice.exception.BadRequestException;
 import com.cabservice.exception.TripNotFoundException;
-import com.cabservice.exception.UserNotFoundException;
 import com.cabservice.mapper.TripMapper;
 import com.cabservice.repository.TripRepository;
 import com.cabservice.repository.UserRepository;
+import com.cabservice.security.CurrentUserService;
 import com.cabservice.service.DistanceService;
 import com.cabservice.service.FareService;
 import com.cabservice.service.TripService;
@@ -28,29 +28,38 @@ public class TripServiceImpl implements TripService {
     private final UserRepository userRepository;
     private final DistanceService distanceService;
     private final FareService fareService;
+    private final CurrentUserService currentUserService;
 
     @Override
     public TripResponseDTO bookTrip(TripRequestDTO request) {
 
-        // 1. Origin and destination cannot be same
-        if(request.getOrigin().trim().equalsIgnoreCase(request.getDestination().trim())) {
+        if(request.getOrigin().trim()
+                  .equalsIgnoreCase(request.getDestination().trim())) {
 
-            throw new BadRequestException("Origin and destination cannot be the same");
+            throw new BadRequestException(
+                    "Origin and destination cannot be the same"
+            );
         }
 
-        // 2. Return date cannot be before pickup date
-        if(request.getReturnDate() != null && request.getReturnDate().isBefore(request.getPickupDate())) {
+        if(request.getReturnDate() != null &&
+                request.getReturnDate()
+                       .isBefore(request.getPickupDate())) {
 
-            throw new BadRequestException("Return date cannot be before pickup date");
+            throw new BadRequestException(
+                    "Return date cannot be before pickup date"
+            );
         }
 
+        User user = currentUserService.getCurrentUser();
 
-        User user = userRepository.findById(request.getUserId())
-                                  .orElseThrow(() -> new UserNotFoundException(
-                                          "User not found with id: " + request.getUserId()));
+        Double distance =
+                distanceService.calculateDistance(
+                        request.getOrigin(),
+                        request.getDestination()
+                );
 
-        Double distance = distanceService.calculateDistance(request.getOrigin(), request.getDestination());
-        Double fare = fareService.calculateFare(distance);
+        Double fare =
+                fareService.calculateFare(distance);
 
         Trip trip = Trip.builder()
                         .user(user)
@@ -69,22 +78,78 @@ public class TripServiceImpl implements TripService {
         return TripMapper.toDTO(savedTrip);
     }
 
+
+
     @Override
-    public TripResponseDTO getTripById(Long tripId) {
+    public List<TripResponseDTO> getMyTrips() {
+
+        User currentUser =
+                currentUserService.getCurrentUser();
+
+        return tripRepository
+                .findByUserId(currentUser.getId())
+                .stream()
+                .map(TripMapper :: toDTO)
+                .toList();
+    }
+
+    @Override
+    public TripResponseDTO getMyTripById(Long tripId) {
+
+        User currentUser =
+                currentUserService.getCurrentUser();
 
         Trip trip = tripRepository.findById(tripId)
-                                  .orElseThrow(() -> new TripNotFoundException("Trip not found with id: " + tripId));
+                                  .orElseThrow(() ->
+                                          new TripNotFoundException(
+                                                  "Trip not found with id: " + tripId
+                                          )
+                                  );
+
+        if(! trip.getUser()
+                 .getId()
+                 .equals(currentUser.getId())) {
+
+            throw new BadRequestException(
+                    "You are not allowed to access this trip"
+            );
+        }
 
         return TripMapper.toDTO(trip);
     }
 
     @Override
-    public List<TripResponseDTO> getTripsByUser(Long userId) {
+    public TripResponseDTO cancelMyTrip(Long tripId) {
 
-        if(! userRepository.existsById(userId)) {
-            throw new UserNotFoundException("User not found with id: " + userId);
+        User currentUser =
+                currentUserService.getCurrentUser();
+
+        Trip trip = tripRepository.findById(tripId)
+                                  .orElseThrow(() ->
+                                          new TripNotFoundException(
+                                                  "Trip not found with id: " + tripId
+                                          )
+                                  );
+
+        if(! trip.getUser()
+                 .getId()
+                 .equals(currentUser.getId())) {
+
+            throw new BadRequestException(
+                    "You are not allowed to cancel this trip"
+            );
         }
 
-        return tripRepository.findByUserId(userId).stream().map(TripMapper :: toDTO).toList();
+        if(trip.getStatus() != TripStatus.BOOKED) {
+            throw new BadRequestException(
+                    "Only booked trips can be cancelled"
+            );
+        }
+
+        trip.setStatus(TripStatus.CANCELLED);
+
+        Trip savedTrip = tripRepository.save(trip);
+
+        return TripMapper.toDTO(savedTrip);
     }
 }

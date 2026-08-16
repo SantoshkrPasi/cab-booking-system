@@ -6,67 +6,46 @@ import com.cabservice.dto.response.TripResponseDTO;
 import com.cabservice.service.TripService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/trips")
 @RequiredArgsConstructor
+@RequestMapping("/api/trips")
 public class TripController {
 
     private final TripService tripService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<TripResponseDTO>> bookTrip(
-            @Valid @RequestBody TripRequestDTO request) {
+    public ResponseEntity<ApiResponse<TripResponseDTO>> bookTrip(@Valid @RequestBody TripRequestDTO request) {
 
-        TripResponseDTO response = tripService.bookTrip(request);
-
-        ApiResponse<TripResponseDTO> apiResponse =
-                new ApiResponse<>(
-                        true,
-                        "Trip booked successfully",
-                        response
-                );
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(apiResponse);
+        return ResponseEntity.status(201)
+                             .body(new ApiResponse<>(true, "Trip booked successfully", tripService.bookTrip(request)));
     }
 
-    @GetMapping("/{tripId}")
-    public ResponseEntity<ApiResponse<TripResponseDTO>> getTrip(
-            @PathVariable Long tripId) {
+    @GetMapping("/my")
+    public ResponseEntity<ApiResponse<List<TripResponseDTO>>> getMyTrips() {
 
-        TripResponseDTO response = tripService.getTripById(tripId);
-
-        ApiResponse<TripResponseDTO> apiResponse =
-                new ApiResponse<>(
-                        true,
-                        "Trip fetched successfully",
-                        response
-                );
-
-        return ResponseEntity.ok(apiResponse);
+        return ResponseEntity.status(200)
+                             .body(new ApiResponse<>(true, "Trips fetched successfully", tripService.getMyTrips()));
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<ApiResponse<List<TripResponseDTO>>> getUserTrips(
-            @PathVariable Long userId) {
+    @GetMapping("/my/{tripId}")
+    public ResponseEntity<ApiResponse<TripResponseDTO>> getMyTrip(@PathVariable Long tripId) {
 
-        List<TripResponseDTO> response =
-                tripService.getTripsByUser(userId);
-
-        ApiResponse<List<TripResponseDTO>> apiResponse =
-                new ApiResponse<>(
-                        true,
-                        "User trips fetched successfully",
-                        response
-                );
-
-        return ResponseEntity.ok(apiResponse);
+        return ResponseEntity.status(200)
+                             .body(new ApiResponse<>(true, "Trip fetched successfully",
+                                     tripService.getMyTripById(tripId)));
     }
+
+    @PatchMapping("/my/{tripId}/cancel")
+    public ResponseEntity<ApiResponse<TripResponseDTO>> cancelTrip(@PathVariable Long tripId) {
+
+        return ResponseEntity.status(200)
+                             .body(new ApiResponse<>(true, "Trip cancelled successfully",
+                                     tripService.cancelMyTrip(tripId)));
+    }
+
 }

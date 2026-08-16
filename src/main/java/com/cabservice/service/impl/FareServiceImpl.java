@@ -13,6 +13,9 @@ public class FareServiceImpl implements FareService {
     @Override
     public Double calculateFare(Double distance) {
 
-        return BASE_FARE + (distance * PRICE_PER_KM);
+        double fare =
+                BASE_FARE + (distance * PRICE_PER_KM);
+
+        return Math.round(fare * 100.0) / 100.0;
     }
 }
