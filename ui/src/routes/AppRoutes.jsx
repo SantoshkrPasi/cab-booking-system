@@ -1,48 +1,77 @@
 import {Navigate, Route, Routes} from "react-router-dom";
-import Register from "../pages/auth/Register.jsx";
-import Login from "../pages/auth/Login.jsx";
-import ProtectedRoute from "./ProtectedRoute.jsx";
+
+import Login from "../pages/auth/Login";
+import Register from "../pages/auth/Register";
+
+import ProtectedRoute from "./ProtectedRoute";
+import AdminRoute from "./AdminRoute";
+import Dashboard from "../pages/user/Dashboard.jsx";
+import BookCab from "../pages/user/BookCab.jsx";
+import MyTrips from "../pages/user/MyTrips.jsx";
+import AdminDashboard from "../pages/admin/AdminDashboard.jsx";
+import AdminUsers from "../pages/admin/AdminUsers.jsx";
+import AdminTrips from "../pages/admin/AdminTrips.jsx";
 
 export default function AppRoutes() {
-	return (
-		<Routes>
 
-			<Route
-				path="/"
-				element={<Navigate to="/login" replace/>}
-			/>
+	return (<Routes>
 
-			<Route
-				path="/login"
-				element={<Login/>}
-			/>
+		<Route
+			path="/"
+			element={<Navigate
+				to="/login"
+				replace
+			/>}
+		/>
 
-			<Route
-				path="/register"
-				element={
-					<Register/>
-				}
-			/>
+		<Route
+			path="/login"
+			element={<Login/>}
+		/>
 
-			<Route
-				path="/dashboard"
-				element={
-					<ProtectedRoute>
-						<h1>User Dashboard</h1>
-					</ProtectedRoute>
-				}
-			/>
+		<Route
+			path="/register"
+			element={<Register/>}
+		/>
 
-			<Route
-				path="/admin/dashboard"
-				element={
-					<ProtectedRoute>
-						<h1>Admin Dashboard</h1>
-					</ProtectedRoute>
-				}
-			/>
+		<Route
+			path="/dashboard"
+			element={<ProtectedRoute>
+				<Dashboard/>
+			</ProtectedRoute>}
+		/>
 
+		<Route
+			path="/admin/dashboard"
+			element={<AdminRoute>
+				<AdminDashboard/>
+			</AdminRoute>}
+		/>
+		<Route
+			path="/book-cab"
+			element={<ProtectedRoute>
+				<BookCab/>
+			</ProtectedRoute>}
+		/>
 
-		</Routes>
-	);
+		<Route
+			path="/my-trips"
+			element={<ProtectedRoute>
+				<MyTrips/>
+			</ProtectedRoute>}
+		/>
+		<Route
+			path="/admin/users"
+			element={<AdminRoute>
+				<AdminUsers/>
+			</AdminRoute>}
+		/>
+
+		<Route
+			path="/admin/trips"
+			element={<AdminRoute>
+				<AdminTrips/>
+			</AdminRoute>}
+		/>
+	</Routes>);
 }
