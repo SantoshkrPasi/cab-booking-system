@@ -4,13 +4,13 @@ export default function ProtectedRoute({children}) {
 
 	const token = localStorage.getItem("token");
 
-	if (!token) {
-		return (
-			<Navigate
-				to="/login"
-				replace
-			/>
-		);
+	const role = localStorage.getItem("role");
+
+	if (!token || !role) {
+		return (<Navigate
+			to="/login"
+			replace
+		/>);
 	}
 
 	return children;

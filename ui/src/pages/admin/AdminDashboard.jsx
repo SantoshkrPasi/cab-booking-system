@@ -1,12 +1,12 @@
 import {useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
 import toast from "react-hot-toast";
 
+import {Car, CircleCheck, CircleX, Clock3, Users, Wallet} from "lucide-react";
+
+import AdminLayout from "../../components/layout/AdminLayout";
 import {getAdminDashboard} from "../../services/adminService";
 
 export default function AdminDashboard() {
-
-	const navigate = useNavigate();
 
 	const [dashboard, setDashboard] = useState(null);
 	const [loading, setLoading] = useState(true);
@@ -35,127 +35,91 @@ export default function AdminDashboard() {
 
 	}, []);
 
-	const handleLogout = () => {
-
-		localStorage.clear();
-
-		toast.success("Logged out successfully");
-
-		navigate("/login");
-	};
-
 	if (loading) {
 
-		return (<div>
-			Loading dashboard...
-		</div>);
+		return (<AdminLayout>
+
+			<div className="rounded-2xl border bg-white p-10 text-center text-slate-500 shadow-sm">
+				Loading dashboard...
+			</div>
+
+		</AdminLayout>);
 	}
 
-	return (<div>
+	const cards = [
 
-		<h1>
-			Admin Dashboard
-		</h1>
+		{
+			title: "Total Users", value: dashboard?.totalUsers ?? 0, icon: Users
+		},
 
-		<p>
-			Welcome,{" "}
-			{localStorage.getItem("firstName")}
-		</p>
+		{
+			title: "Total Trips", value: dashboard?.totalTrips ?? 0, icon: Car
+		},
 
-		<hr/>
+		{
+			title: "Booked Trips", value: dashboard?.bookedTrips ?? 0, icon: Clock3
+		},
 
-		<div>
+		{
+			title: "Completed Trips", value: dashboard?.completedTrips ?? 0, icon: CircleCheck
+		},
 
-			<h2>
-				Total Users
-			</h2>
+		{
+			title: "Cancelled Trips", value: dashboard?.cancelledTrips ?? 0, icon: CircleX
+		},
 
-			<p>
-				{dashboard?.totalUsers ?? 0}
+		{
+			title: "Total Revenue", value: `₹${Number(dashboard?.totalRevenue ?? 0).toFixed(2)}`, icon: Wallet
+		}];
+
+	return (<AdminLayout>
+
+		<div className="mb-8">
+
+			<h1 className="text-3xl font-bold text-slate-900">
+				Admin Dashboard
+			</h1>
+
+			<p className="mt-2 text-slate-500">
+				Monitor users, trips and overall platform activity.
 			</p>
 
 		</div>
 
-		<div>
+		<div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
 
-			<h2>
-				Total Trips
-			</h2>
+			{cards.map((card) => {
 
-			<p>
-				{dashboard?.totalTrips ?? 0}
-			</p>
+				const Icon = card.icon;
 
-		</div>
+				return (
 
-		<div>
+					<div
+						key={card.title}
+						className="rounded-2xl border bg-white p-6 shadow-sm"
+					>
 
-			<h2>
-				Booked Trips
-			</h2>
+						<div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100">
 
-			<p>
-				{dashboard?.bookedTrips ?? 0}
-			</p>
+							<Icon size={24}/>
 
-		</div>
+						</div>
 
-		<div>
+						<p className="text-sm font-medium text-slate-500">
+							{card.title}
+						</p>
 
-			<h2>
-				Completed Trips
-			</h2>
+						<p className="mt-2 text-3xl font-bold text-slate-900">
+							{card.value}
+						</p>
 
-			<p>
-				{dashboard?.completedTrips ?? 0}
-			</p>
+					</div>
 
-		</div>
+				);
 
-		<div>
-
-			<h2>
-				Cancelled Trips
-			</h2>
-
-			<p>
-				{dashboard?.cancelledTrips ?? 0}
-			</p>
+			})}
 
 		</div>
 
-		<div>
-
-			<h2>
-				Total Revenue
-			</h2>
-
-			<p>
-				₹
-				{Number(dashboard?.totalRevenue ?? 0).toFixed(2)}
-			</p>
-
-		</div>
-
-		<hr/>
-
-		<button
-			onClick={() => navigate("/admin/users")}
-		>
-			Manage Users
-		</button>
-
-		<button
-			onClick={() => navigate("/admin/trips")}
-		>
-			Manage Trips
-		</button>
-
-		<button
-			onClick={handleLogout}
-		>
-			Logout
-		</button>
-
-	</div>);
+	</AdminLayout>);
 }

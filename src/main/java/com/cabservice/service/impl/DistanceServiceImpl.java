@@ -83,10 +83,6 @@ public class DistanceServiceImpl implements DistanceService {
 
         String url = routingUrl + "?waypoints=" + waypoints + "&mode=drive" + "&format=geojson" + "&apiKey=" + apiKey;
 
-        System.out.println("Geoapify routing waypoints: " + waypoints);
-
-        System.out.println("Geoapify Routing URL: " + url.replace(apiKey, "HIDDEN_API_KEY"));
-
         try {
 
             GeoapifyRoutingResponse response = restClient.get().uri(url).retrieve().body(GeoapifyRoutingResponse.class);
@@ -116,9 +112,6 @@ public class DistanceServiceImpl implements DistanceService {
         } catch(Exception exception) {
 
             exception.printStackTrace();
-
-            System.out.println("Geoapify routing failed for: " + waypoints);
-
             throw new BadRequestException("Unable to find a driving route between origin and destination");
         }
     }

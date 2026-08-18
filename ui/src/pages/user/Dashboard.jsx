@@ -1,68 +1,96 @@
-import {Link, useNavigate} from "react-router-dom";
-import toast from "react-hot-toast";
+import {Link} from "react-router-dom";
+import {Car, History, MapPin} from "lucide-react";
+
+import UserLayout from "../../components/layout/UserLayout";
 
 export default function Dashboard() {
-
-	const navigate = useNavigate();
 
 	const firstName =
 		localStorage.getItem("firstName");
 
-	const email =
-		localStorage.getItem("email");
-
-	const handleLogout = () => {
-
-		localStorage.clear();
-
-		toast.success("Logged out successfully");
-
-		navigate("/login");
-	};
-
 	return (
-		<div>
+		<UserLayout>
 
-			<h1>
-				Welcome, {firstName}
-			</h1>
+			<div className="mb-8">
 
-			<p>
-				{email}
-			</p>
+				<h1 className="text-3xl font-bold text-slate-900">
+					Welcome back, {firstName}
+				</h1>
 
-			<hr/>
+				<p className="mt-2 text-slate-600">
+					Where would you like to go today?
+				</p>
 
-			<div>
+			</div>
 
-				<h2>
-					Cab Service Dashboard
-				</h2>
+			<div className="grid gap-6 md:grid-cols-2">
 
-				<div>
+				<Link
+					to="/book-cab"
+					className="rounded-2xl border bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+				>
 
-					<Link to="/book-cab">
-						<button>
-							Book Cab
-						</button>
-					</Link>
+					<div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100">
 
-					<Link to="/my-trips">
-						<button>
-							My Trips
-						</button>
-					</Link>
+						<MapPin size={24}/>
 
-					<button
-						onClick={handleLogout}
-					>
-						Logout
-					</button>
+					</div>
+
+					<h2 className="text-xl font-semibold">
+						Book a Cab
+					</h2>
+
+					<p className="mt-2 text-sm text-slate-600">
+						Enter your pickup location and destination to book your next ride.
+					</p>
+
+				</Link>
+
+				<Link
+					to="/my-trips"
+					className="rounded-2xl border bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+				>
+
+					<div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100">
+
+						<History size={24}/>
+
+					</div>
+
+					<h2 className="text-xl font-semibold">
+						My Trips
+					</h2>
+
+					<p className="mt-2 text-sm text-slate-600">
+						View your current and previous cab bookings.
+					</p>
+
+				</Link>
+
+			</div>
+
+			<div className="mt-8 rounded-2xl border bg-white p-6 shadow-sm">
+
+				<div className="flex items-center gap-3">
+
+					<Car size={26}/>
+
+					<div>
+
+						<h2 className="font-semibold">
+							CabGo
+						</h2>
+
+						<p className="text-sm text-slate-500">
+							Simple, secure and convenient cab booking.
+						</p>
+
+					</div>
 
 				</div>
 
 			</div>
 
-		</div>
+		</UserLayout>
 	);
 }

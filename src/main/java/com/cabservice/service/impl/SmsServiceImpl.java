@@ -11,13 +11,8 @@ public class SmsServiceImpl implements SmsService {
             String mobileNumber,
             String otp) {
 
-        /*
-         * Temporary development implementation.
-         *
-         * Later this will call an actual SMS provider.
-         */
         System.out.println(
-                "SMS OTP for "
+                "[DEV ONLY] Mobile OTP for "
                         + mobileNumber
                         + " = "
                         + otp

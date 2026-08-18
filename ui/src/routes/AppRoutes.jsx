@@ -11,6 +11,7 @@ import MyTrips from "../pages/user/MyTrips.jsx";
 import AdminDashboard from "../pages/admin/AdminDashboard.jsx";
 import AdminUsers from "../pages/admin/AdminUsers.jsx";
 import AdminTrips from "../pages/admin/AdminTrips.jsx";
+import ForgotPassword from "../pages/auth/ForgotPassword";
 
 export default function AppRoutes() {
 
@@ -73,5 +74,13 @@ export default function AppRoutes() {
 				<AdminTrips/>
 			</AdminRoute>}
 		/>
+
+		<Route
+			path="/forgot-password"
+			element={<ForgotPassword/>}
+		/>
+		
 	</Routes>);
+
+
 }
