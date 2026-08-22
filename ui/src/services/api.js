@@ -8,36 +8,95 @@ const api = axios.create({
 	}
 });
 
-api.interceptors.request.use((config) => {
 
-		const token = localStorage.getItem("token");
+/*
+ * Attach JWT token to protected API requests
+ */
+api.interceptors.request.use(
+	(config) => {
+
+		const token =
+			localStorage.getItem("token");
 
 		if (token) {
-			config.headers.Authorization = `Bearer ${token}`;
+
+			config.headers.Authorization =
+				`Bearer ${token}`;
 		}
 
 		return config;
 	},
 
 	(error) => {
-		return Promise.reject(error);
-	});
 
-api.interceptors.response.use((response) => {
+		return Promise.reject(error);
+	}
+);
+
+
+/*
+ * Handle API errors globally
+ */
+api.interceptors.response.use(
+	(response) => {
 
 		return response;
 	},
 
 	(error) => {
 
-		if (error.response?.status === 401) {
+		const status =
+			error.response?.status;
 
-			localStorage.clear();
+		const requestUrl =
+			error.config?.url || "";
 
-			window.location.href = "/login";
+
+		/*
+		 * Login can return 401 when password is wrong.
+		 *
+		 * In that case DO NOT redirect.
+		 * Let Login.jsx show the error message.
+		 */
+		const isLoginRequest =
+			requestUrl.includes(
+				"/auth/login"
+			);
+
+
+		/*
+		 * Only redirect to login when:
+		 *
+		 * - JWT is expired
+		 * - JWT is invalid
+		 * - protected API returns 401
+		 */
+		if (
+			status === 401 &&
+			!isLoginRequest
+		) {
+
+			localStorage.removeItem("token");
+			localStorage.removeItem("userId");
+			localStorage.removeItem("firstName");
+			localStorage.removeItem("email");
+			localStorage.removeItem("role");
+
+
+			if (
+				window.location.pathname !==
+				"/login"
+			) {
+
+				window.location.href =
+					"/login";
+			}
 		}
 
+
 		return Promise.reject(error);
-	});
+	}
+);
+
 
 export default api;

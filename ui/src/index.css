@@ -1,13 +1,263 @@
 @import "tailwindcss";
 
+
+/* =========================================================
+   ROOT
+   ========================================================= */
+
+:root {
+    font-family: Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+    color: #0f172a;
+    background: #f5f7fb;
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+
+/* =========================================================
+   GLOBAL RESET
+   ========================================================= */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+    margin: 0;
+    width: 100%;
+    min-width: 320px;
+    min-height: 100%;
+}
+
+
+/* =========================================================
+   HTML
+   ========================================================= */
+
+html {
+    scroll-behavior: smooth;
+
+    /*
+     * Prevent page bounce / stretch
+     * when scrolling past top or bottom.
+     */
+    overscroll-behavior: none;
+
+    background: #f5f7fb;
+}
+
+
+/* =========================================================
+   BODY
+   ========================================================= */
+
 body {
     margin: 0;
+
     min-width: 320px;
     min-height: 100vh;
-    background: #f8fafc;
-    font-family: Arial, Helvetica, sans-serif;
+
+    color: #0f172a;
+
+    /*
+     * Prevent Mac/browser rubber-band scrolling.
+     */
+    overscroll-behavior: none;
+
+    /*
+     * Prevent accidental horizontal scrolling.
+     */
+    overflow-x: hidden;
+
+    background: radial-gradient(
+            circle at 90% 5%,
+            rgba(37, 99, 235, 0.08),
+            transparent 28rem
+    ),
+    radial-gradient(
+            circle at 10% 90%,
+            rgba(59, 130, 246, 0.05),
+            transparent 28rem
+    ),
+    #f5f7fb;
 }
+
+
+/* =========================================================
+   REACT ROOT
+   ========================================================= */
+
+#root {
+    min-height: 100vh;
+
+    /*
+     * Prevent content from creating
+     * unwanted horizontal movement.
+     */
+    overflow-x: hidden;
+}
+
+
+/* =========================================================
+   FORM ELEMENTS
+   ========================================================= */
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
 
 button {
     cursor: pointer;
+}
+
+button:disabled {
+    cursor: not-allowed;
+}
+
+
+/* =========================================================
+   LINKS
+   ========================================================= */
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+
+/* =========================================================
+   TEXT SELECTION
+   ========================================================= */
+
+::selection {
+    background: #dbeafe;
+    color: #1e3a8a;
+}
+
+
+/* =========================================================
+   INPUT PLACEHOLDER
+   ========================================================= */
+
+input::placeholder,
+textarea::placeholder {
+    color: #94a3b8;
+}
+
+
+/* =========================================================
+   DATE & TIME INPUTS
+   ========================================================= */
+
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"] {
+    color-scheme: light;
+}
+
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+
+/* =========================================================
+   FIREFOX SCROLLBAR
+   ========================================================= */
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+}
+
+
+/* =========================================================
+   REMOVE TAP HIGHLIGHT
+   ========================================================= */
+
+button,
+a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+
+/* =========================================================
+   IMAGES
+   ========================================================= */
+
+img,
+svg {
+    max-width: 100%;
+}
+
+
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
+
+:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
 }

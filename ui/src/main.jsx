@@ -14,6 +14,14 @@ createRoot(
 
 		<Toaster
 			position="top-right"
+			toastOptions={{
+				duration: 3500,
+				style: {
+					borderRadius: "12px",
+					padding: "14px 16px",
+					fontSize: "14px"
+				}
+			}}
 		/>
 
 	</StrictMode>
